@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?><Task schemaVersion="5.4">
+    <Registration>
+        <Name>Choropleth Map</Name>
+        <Description>Choropleth Map task creates a map of polygonal areas.</Description>
+        <GUID>e8d93c5a-4157-4215-b33b-6e56d284bd55</GUID>
+        <Procedures>SGMAP</Procedures>
+        <Version>3.8</Version>
+        <Links>
+            <Link href="http://documentation.sas.com/?softwareId=STUDIOMID&amp;softwareVersion=3.8&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="http://documentation.sas.com/?softwareId=MVADOC&amp;softwareVersion=3.8_9.4&amp;softwareContextId=proc_sgmap&amp;requestor=inapp">The SGMAP Procedure</Link>
+            <Link href=""> </Link>
+            <Link href="http://support.sas.com/training/tutorial/viya/index.html">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+
+    <Metadata>
+    <!--- Define the data roles for this task. -->
+        <DataSources>
+            <DataSource libraryEngineInclude="V9" name="mapData" where="true">
+                <Roles>
+                    <Role maxVars="1" minVars="1" name="mapID" type="A">ID variable:</Role>
+                </Roles>
+            </DataSource>
+            <DataSource name="mapRespData" where="true">
+                <Roles>
+                    <Role maxVars="1" minVars="1" name="mapRespID" type="A">ID variable:</Role>
+                    <Role maxVars="1" minVars="1" name="respVar" type="A">Response variable:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+
+        <Options>
+            <Option inputType="string" name="dataTab">DATA</Option>
+            <Option inputType="string" name="mapGroup0">BASE MAP</Option>
+            <Option inputType="string" name="mapDataGroup">Map Data</Option>
+            <Option inputType="string" name="mapDataLabel">Data</Option>
+            <Option inputType="string" name="mapRolesGroup">Roles</Option>
+            <Option defaultValue="1" indent="0" inputType="radio" name="openStreetMap" variable="mapType">OpenStreetMap</Option>
+            <Option indent="0" inputType="radio" name="esriMap" variable="mapType">Esri map</Option>
+			<Option defaultValue="http://server.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer" indent="1" inputType="validationtext" invalidMessage="Invalid url" missingMessage="Missing url" name="esriUrl" promptMessage="Enter Esri map url" required="true">Specify Esri base map URL:</Option>
+            <Option defaultValue="1" inputType="checkbox" name="baseMap">Include base map layer</Option>
+
+
+            <Option inputType="string" name="choroMapGroup">CHOROPLETH MAP</Option>
+
+            <Option defaultValue="0" inputType="checkbox" name="choroMap">Include choropleth map layer</Option>
+
+            <Option inputType="string" name="mapRespDataGroup">Map Response Data</Option>
+            <Option inputType="string" name="mapRespDataLabel">Data</Option>
+            <Option inputType="string" name="mapRespRolesGroup">Roles</Option>
+            <Option defaultValue="0" inputType="checkbox" name="includeResponse">Include response data</Option>
+
+
+            <Option inputType="string" name="appearanceTab">APPEARANCE</Option>
+        
+	<!--- Define the task options.-->
+            <!--- Legend label options -->                            
+            <Option inputType="string" name="legendLabelGroup">LEGEND</Option>
+            <Option defaultValue="1" inputType="checkbox" name="choroLegend">Generate choromap legend</Option>
+            <Option defaultValue="" indent="1" inputType="inputtext" name="choroLegendLabel" width="400px">Label:</Option>
+
+        <!--- define the choro map options -->
+            <Option inputType="string" name="choroMapOptionsGroup">CHOROMAP</Option>
+		<Option defaultValue="0.0" discreteValues="20" inputType="slider" maxValue="1.0" minValue="0" name="transChoro" showButtons="true">Transparency:</Option>
+
+            <!--- define the line attributes options -->
+            <Option inputType="string" name="lineAttrsGroup">Line Attributes</Option>
+            <Option defaultValue="solid" inputType="combobox" name="linePattern">Line style:</Option>
+            <Option inputType="string" name="solidLine" returnValue="solid">Solid (default)</Option>
+            <Option inputType="string" name="shortDashLine" returnValue="shortdash">Short-dash</Option>
+            <Option inputType="string" name="mediumDashLine" returnValue="mediumdash">Medium-dash</Option>
+            <Option inputType="string" name="longDashLine" returnValue="longdash">Long-dash</Option>
+            <Option inputType="string" name="mediumDashShortDashLine" returnValue="mediumdashshortdash">Medium-dash short-dash</Option>
+            <Option inputType="string" name="dashDashDotLine" returnValue="dashdashdot">Dash dash dot</Option>
+            <Option inputType="string" name="dashDotDotLine" returnValue="dashdotdot">Dash dot dot</Option>
+            <Option inputType="string" name="dashLine" returnValue="dash">Dash</Option>
+            <Option inputType="string" name="longDashShortDashLine" returnValue="longdashshortdash">Long-dash short-dash</Option>
+            <Option inputType="string" name="dotLine" returnValue="dot">Dot</Option>
+            <Option inputType="string" name="thinDotLine" returnValue="thindot">Thin-dot</Option>
+            <Option inputType="string" name="shortDashDotLine" returnValue="shortdashdot">Short-dash dot</Option>
+            <Option inputType="string" name="mediumDashDotDotLine" returnValue="mediumdashdotdot">Medium-dash dot dot</Option>
+
+            <Option defaultValue="0" inputType="checkbox" name="useLineColor">Set color</Option>
+            <Option defaultValue="#003399" indent="1" inputType="color" name="lineColor">Color</Option>
+            <Option decimalPlaces="0" defaultValue="1" increment="1" inputType="numstepper" maxValue="20" minValue="1" name="lineThick" required="true" size="8em">Line thickness (default: 1 pixel):</Option>
+
+
+            <!--- Title and footnotes options -->                            
+            <Option inputType="string" name="title">TITLE AND FOOTNOTE</Option>
+            <Option defaultValue="" inputType="inputtext" name="titleString" width="400px">Title:</Option>
+            <Option decimalPlaces="0" defaultValue="14" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 5 and less than or equal to 24." maxValue="24" minValue="5" missingMessage="Enter an integer greater than or equal to 5 and less than or equal to 24." name="titleSize" promptMessage="Enter an integer greater than or equal to 5 and less than or equal to 24." rangeMessage="Enter an integer greater than or equal to 5 and less than or equal to 24." required="true" size="8em">Font size (default: 14 pt):</Option>
+            <Option defaultValue="" inputType="inputtext" name="footnoteString" width="400px">Footnote:</Option>
+            <Option decimalPlaces="0" defaultValue="12" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 5 and less than or equal to 20." maxValue="20" minValue="5" missingMessage="Enter an integer greater than or equal to 5 and less than or equal to 20." name="footnoteSize" promptMessage="Enter an integer greater than or equal to 5 and less than or equal to 20." rangeMessage="Enter an integer greater than or equal to 5 and less than or equal to 20." required="true" size="8em">Font size (default: 12 pt):</Option>
+
+            <!--- Graph Size options -->                            
+            <Option inputType="string" name="graphSize">GRAPH SIZE</Option>
+            <Option defaultValue="in" inputType="combobox" name="dimType" width="100px">Unit:</Option>
+            <Option inputType="string" name="in">Inch (default)</Option>
+            <Option inputType="string" name="cm">Centimeter</Option>
+            <Option inputType="string" name="px">Pixel</Option>
+            <Option decimalPlaces="0,1" defaultValue="6.4" increment="0.1" inputType="numstepper" invalidMessage="Enter a number from 2 to 8 for the width in inches" maxValue="8.0" minValue="2.0" missingMessage="Enter a number from 2 to 8 for the width in inches" name="inchWidth" promptMessage="Enter a number from 2 to 8 for the width in inches" rangeMessage="Enter a number from 2 to 8 for the width in inches" required="true" size="10em">Width:</Option>
+            <Option decimalPlaces="0,1" defaultValue="4.8" increment="0.1" inputType="numstepper" invalidMessage="Enter a number from 2 to 12 for the height in inches" maxValue="12.0" minValue="2.0" missingMessage="Enter a number from 2 to 12 for the height in inches" name="inchHeight" promptMessage="Enter a number from 2 to 12 for the height in inches" rangeMessage="Enter a number from 2 to 12 for the height in inches" required="true" size="10em">Height:</Option>
+            <Option decimalPlaces="0,1" defaultValue="16" increment="0.1" inputType="numstepper" invalidMessage="Enter a number from 5 to 20 for the width in cms" maxValue="20.0" minValue="5.0" missingMessage="Enter a number from 5 to 20 for the width in cms" name="cmWidth" promptMessage="Enter a number from 5 to 20 for the width in cms" rangeMessage="Enter a number from 5 to 20 for the width in cms" required="true" size="10em">Width:</Option>
+            <Option decimalPlaces="0,1" defaultValue="12" increment="0.1" inputType="numstepper" invalidMessage="Enter a number from 5 to 30 for the height in cms" maxValue="30.0" minValue="5.0" missingMessage="Enter a number from 5 to 30 for the height in cms" name="cmHeight" promptMessage="Enter a number from 5 to 30 for the height in cms" rangeMessage="Enter a number from 5 to 30 for the height in cms" required="true" size="10em">Height:</Option>
+            <Option decimalPlaces="0,1" defaultValue="640" increment="1" inputType="numstepper" invalidMessage="Enter a number from 50 to 768 for the width in pixels" maxValue="768" minValue="50" missingMessage="Enter a number from 50 to 768 for the width in pixels" name="pixelWidth" promptMessage="Enter a number from 50 to 768 for the width in pixels" rangeMessage="Enter a number from 50 to 768 for the width in pixels" required="true" size="10em">Width:</Option>
+            <Option decimalPlaces="0,1" defaultValue="480" increment="1" inputType="numstepper" invalidMessage="Enter a number from 50 to 1200 for the height in pixels" maxValue="1200" minValue="50" missingMessage="Enter a number from 50 to 1200 for the height in pixels" name="pixelHeight" promptMessage="Enter a number from 50 to 1200 for the height in pixels" rangeMessage="Enter a number from 50 to 1200 for the height in pixels" required="true" size="10em">Height:</Option>
+            
+       
+        </Options>
+    </Metadata>
+
+    <!--- Define the task options relationships                  -->
+    <!--- The UI engine will determine the best respresentation. -->
+    <UI>
+		<Container option="dataTab">
+			<Group open="true" option="choroMapGroup">
+				<Group open="true" option="mapDataGroup">
+					<Group open="true" option="mapDataLabel">
+						<DataItem data="mapData"/>
+					</Group>
+					<Group open="true" option="mapRolesGroup">
+						<RoleItem role="mapID"/>
+					</Group>
+				</Group>
+				<OptionItem option="includeResponse"/>
+				<Group open="true" option="mapRespDataGroup">
+					<Group open="true" option="mapRespDataLabel">
+						<DataItem data="mapRespData"/>
+					</Group>
+					<Group open="true" option="mapRespRolesGroup">
+						<RoleItem role="respVar"/>
+						<RoleItem role="mapRespID"/>
+					</Group>
+				</Group>
+			</Group>
+			
+			<OptionItem option="baseMap"/>
+			<Group open="true" option="mapGroup0">
+				<OptionItem option="openStreetMap"/>
+				<OptionItem option="esriMap"/>
+				<OptionItem option="esriUrl"/>
+			</Group>
+		</Container>
+
+	<Container option="appearanceTab">
+		<Group open="true" option="legendLabelGroup">
+			<OptionItem option="choroLegend"/>
+			<OptionItem option="choroLegendLabel"/>
+		</Group>
+		<Group open="true" option="choroMapOptionsGroup">
+			<Group option="lineAttrsGroup">
+				<OptionItem option="useLineColor"/>
+				<OptionItem option="lineColor"/>
+				<OptionItem option="lineThick"/>
+			    <OptionChoice option="linePattern">
+				<OptionItem option="solidLine"/>
+				<OptionItem option="shortDashLine"/>
+				<OptionItem option="mediumDashLine"/>
+				<OptionItem option="longDashLine"/>
+				<OptionItem option="mediumDashShortDashLine"/>
+				<OptionItem option="dashDashDotLine"/>
+				<OptionItem option="dashLine"/>
+				<OptionItem option="longDashShortDashLine"/>
+				<OptionItem option="dotLine"/>
+				<OptionItem option="thinDotLine"/>
+				<OptionItem option="shortDashDotLine"/>
+				<OptionItem option="mediumDashDotDotLine"/>
+			    </OptionChoice>
+			</Group>
+			<OptionItem option="transChoro"/>
+		</Group>
+            <Group open="true" option="title">
+                <OptionItem option="titleString"/>
+                <OptionItem option="titleSize"/>
+                <OptionItem option="footnoteString"/>
+                <OptionItem option="footnoteSize"/>
+            </Group>
+            <Group option="graphSize">
+                <OptionChoice option="dimType">
+                    <OptionItem option="in"/>
+                    <OptionItem option="cm"/>
+                    <OptionItem option="px"/>
+                </OptionChoice>
+                <OptionItem option="inchWidth"/>
+                <OptionItem option="inchHeight"/>
+                <OptionItem option="cmWidth"/>
+                <OptionItem option="cmHeight"/>
+                <OptionItem option="pixelWidth"/>
+                <OptionItem option="pixelHeight"/>
+            </Group>
+        </Container>  
+    </UI>
+
+    <Dependencies>
+        <Dependency condition="($baseMap=='1')">
+            <Target action="show" conditionResult="true" option="mapGroup0"/>
+            <Target action="hide" conditionResult="false" option="mapGroup0"/>
+        </Dependency>
+
+        <Dependency condition="($baseMap=='1' &amp;&amp; $mapType=='esriMap')">
+            <Target action="show" conditionResult="true" option="esriUrl"/>
+            <Target action="hide" conditionResult="false" option="esriUrl"/>
+        </Dependency>
+
+        <Dependency condition="($includeResponse=='1')">
+            <Target action="show" conditionResult="true" option="mapRespDataGroup"/>
+            <Target action="hide" conditionResult="false" option="mapRespDataGroup"/>
+            <Target action="show" conditionResult="true" option="legendLabelGroup"/>
+            <Target action="hide" conditionResult="false" option="legendLabelGroup"/>
+            <Target action="show" conditionResult="true" option="transChoro"/>
+            <Target action="hide" conditionResult="false" option="transChoro"/>
+        </Dependency>
+        
+        <Dependency condition="($choroLegend=='1')">
+            <Target action="show" conditionResult="true" option="choroLegendLabel"/>
+            <Target action="hide" conditionResult="false" option="choroLegendLabel"/>
+        </Dependency>
+        
+        <Dependency condition="($useLineColor=='1')">
+            <Target action="show" conditionResult="true" option="lineColor"/>
+            <Target action="hide" conditionResult="false" option="lineColor"/>
+        </Dependency>
+        
+        <Dependency condition="($dimType=='px')">
+           <Target action="show" conditionResult="true" option="pixelWidth"/>
+           <Target action="show" conditionResult="true" option="pixelHeight"/>
+           <Target action="hide" conditionResult="true" option="inchWidth"/>
+           <Target action="hide" conditionResult="true" option="inchHeight"/>
+           <Target action="hide" conditionResult="true" option="cmWidth"/>
+           <Target action="hide" conditionResult="true" option="cmHeight"/>
+        </Dependency>
+
+        <Dependency condition="($dimType=='in')">
+           <Target action="hide" conditionResult="true" option="pixelWidth"/>
+           <Target action="hide" conditionResult="true" option="pixelHeight"/>
+           <Target action="show" conditionResult="true" option="inchWidth"/>
+           <Target action="show" conditionResult="true" option="inchHeight"/>
+           <Target action="hide" conditionResult="true" option="cmWidth"/>
+           <Target action="hide" conditionResult="true" option="cmHeight"/>
+        </Dependency>
+
+        <Dependency condition="($dimType=='cm')">
+           <Target action="hide" conditionResult="true" option="pixelWidth"/>
+           <Target action="hide" conditionResult="true" option="pixelHeight"/>
+           <Target action="hide" conditionResult="true" option="inchWidth"/>
+           <Target action="hide" conditionResult="true" option="inchHeight"/>
+           <Target action="show" conditionResult="true" option="cmWidth"/>
+           <Target action="show" conditionResult="true" option="cmHeight"/>
+        </Dependency>
+        
+    </Dependencies>
+
+    <Requirements>
+        <Requirement condition="(!($xVar.size()&gt;=1 &amp;&amp; $yVar.size()&gt;=1 &amp;&amp; $xVar[0].get('type')!=$yVar[0].get('type')))">
+            <Message nlsKey="latLongVarsSameTypeMsgKey">The latitude and longitude must be of the same type.</Message>
+        </Requirement>
+        <Requirement condition="(!($mapID.size()&gt;=1 &amp;&amp; $mapRespID.size()&gt;=1 &amp;&amp; $mapID[0].get('type')!=$mapRespID[0].get('type')))">
+            <Message nlsKey="mapIdSameTypeMsgKey">The ID variables in map and map response data set must be of the same type.</Message>
+        </Requirement>
+    </Requirements>
+
+    <!--- Define the velocity code template. -->
+    <CodeTemplate>
+        <![CDATA[
+#if($labelVar.size()>0) #set($LBL=$labelVar.get(0)) #end
+
+##--Set Graph Size--##
+#if($dimType=="in")
+    #set($WIDTH="$inchWidth$dimType")
+    #set($HEIGHT="$inchHeight$dimType")
+#end
+
+#if($dimType=="cm")
+    #set($WIDTH="$cmWidth$dimType")
+    #set($HEIGHT="$cmHeight$dimType")
+#end
+
+#if($dimType=="px")
+    #set($WIDTH="$pixelWidth$dimType")
+    #set($HEIGHT="$pixelHeight$dimType")
+#end
+
+##--Set output size--##
+ods graphics / reset width=$WIDTH height=$HEIGHT;
+
+
+proc sgmap 
+        mapdata = $mapData#if($mapData.getWhereClause()!="")(where=($mapData.getWhereClause())) #end
+	#if($includeResponse == '1') maprespdata = $mapRespData#if($mapRespData.getWhereClause()!="")(where=($mapRespData.getWhereClause())) #end #end
+	#if($choroLegend && $choroLegend != '1') noautolegend #end
+	;
+
+    #if($mapType=='esriMap')
+    esrimap url='$esriUrl';
+    #elseif($mapType=='openStreetMap')
+    openstreetmap;    
+    #end
+
+    choromap #if($includeResponse == '1') $respVar[0] #end/ mapid = $mapID[0] 
+       #if($includeResponse == '1') id = $mapRespID[0] #if($choroLegend == '1') name="choroMap" #end #end 
+	#if($useLineColor=='1' || $lineThick!='1' || $linePattern!='solid') lineattrs=(
+	    #if($linePattern!='solid') pattern=$linePattern #end
+	    #if($lineThick!='1') thickness=$lineThick #end
+	    #if($useLineColor=='1') color=$lineColor #end)
+	#end
+       #if($transChoro && $transChoro != 0.0) transparency = $MathTool.roundTo(2, $transChoro)#end;
+    
+    #if($titleString != "") title #if($titleSize != 14) height=${titleSize}pt #end $CTMUtil.quoteString($titleString) ;#end
+    #if($footnoteString != "") footnote2 justify=left #if($footnoteSize != 12) height=${footnoteSize}pt #end $CTMUtil.quoteString($footnoteString);#end
+    
+    #if($choroLegend == '1') #if($respVar[0].get('type') == 'Numeric') gradlegend #else keylegend#end "choroMap" / title = #if($choroLegendLabel != "") $CTMUtil.quoteString($choroLegendLabel) #else $CTMUtil.quoteString($respVar[0].get('value')) #end ; #end    
+run;    
+
+##--Clean up--##
+ods graphics / reset;
+#if($titleString!="") title; #end
+#if($footnoteString!="") footnote2; #end
+
+        
+]]>
+    </CodeTemplate>
+
+<TemplateValues version="3.8">
+<![CDATA[
+{"mediumDashDotDotLine":"Medium-dash dot dot","mediumDashShortDashLine":"Medium-dash short-dash","pixelWidth":"640","inchWidth":"6.4","appearanceTab":"APPEARANCE","dotLine":"Dot","footnoteString":"","shortDashLine":"Short-dash","pixelHeight":"480","lineColor":"#003399","graphSize":"GRAPH SIZE","shortDashDotLine":"Short-dash dot","mapType":"openStreetMap","sasVersion":"9.46","mapRespID":"json:[{\"value\":\"FIPS\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST.\",\"informat\":\"BEST32.\",\"className\":\"RoleObject\"}]","mapRolesGroup":"Roles","dashLine":"Dash","choroLegendLabel":"","dataTab":"DATA","choroMap":"0","choroMapOptionsGroup":"CHOROMAP","choroMapGroup":"CHOROPLETH MAP","lineThick":"1","mapRespDataGroup":"Map Response Data","cm":"Centimeter","titleString":"","linePattern":"solid","cmWidth":"16","choroLegend":"1","mapRespRolesGroup":"Roles","baseMap":"1","includeResponse":"1","mapGroup0":"BASE MAP","inchHeight":"4.8","title":"TITLE AND FOOTNOTE","esriUrl":"http://server.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer","longDashShortDashLine":"Long-dash short-dash","cmHeight":"12","useLineColor":"0","solidLine":"Solid (default)","mediumDashLine":"Medium-dash","sasOS":"X64_10PRO WIN","mapData":{"librarytable":"SASELECT.A"},"lineAttrsGroup":"Line Attributes","mapDataLabel":"Data","titleSize":"14","mapID":"json:[{\"value\":\"FIPS\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"}]","footnoteSize":"12","dashDotDotLine":"Dash dot dot","mapRespDataLabel":"Data","thinDotLine":"Thin-dot","dimType":"in","esriMap":"0","mapDataGroup":"Map Data","longDashLine":"Long-dash","in":"Inch (default)","legendLabelGroup":"LEGEND","mapRespData":{"librarytable":"SASELECT.RESIDUALS"},"dashDashDotLine":"Dash dash dot","transChoro":"0.0","px":"Pixel","respVar":"json:[{\"value\":\"residual\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"}]","openStreetMap":"1"}
+]]>
+</TemplateValues>
+</Task>
